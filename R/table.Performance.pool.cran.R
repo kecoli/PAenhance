@@ -1,3 +1,11 @@
+#' Print metrics from R CRAN PerformanceAnalytics that compatible with table.Performance
+#' 
+#' @details use \code{table.Performance.pool} to check available metrics. recoded SharpeRatio 
+#' @author Kirk Li  \email{kirkli@@stat.washington.edu} 
+#' @seealso \code{\link{table.Performance}}, \code{\link{table.Performance.pool}}
+#' @keywords table metrics performance measure
+#' @examples
+#' table.Performance.pool.cran()
 table.Performance.pool.cran <-
 function(...){
 	c(		"AdjustedSharpeRatio", 
