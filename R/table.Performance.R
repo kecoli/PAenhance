@@ -16,9 +16,10 @@
 #' @param metricsNames options argument to specify metricsNames, default is NULL, 
 #' the same as the metrics
 #' @param interactive optional argument to trigger data editor window, default is TRUE
-#' @param ArgList optional argument to specify input optional argument for each metric, uses 
+#' @param arg.list optional argument to specify input optional argument for each metric, uses 
 #' only interactive=FALSE
-#' @param digits optional argument to specify the significant digits in printed table
+#' @param digits optional argument to specify the significant digits in printed table, default is 4
+#' @param latex optional arguemnt to output latex code, default is FALSE
 #' @details use \code{table.Performance.pool} to check available metrics. recoded SharpeRatio 
 #' TODO: 
 #' @author Kirk Li  \email{kirkli@@stat.washington.edu} 
@@ -33,17 +34,30 @@
 #' res <- table.Performance(R=edhec,verbose=T, interactive=TRUE)
 #'
 #' # Example 2: start with Var and ES
-#' res.ex2 <- table.Performance(edhec,metrics=c("VaR", "ES"),metricsNames=c("Modified VaR","Modified #' Expected Shortfall"),verbose=T)
+#' res.ex2 <- table.Performance(edhec,metrics=c("VaR", "ES"), 
+#' metricsNames=c("Modified VaR","Modified #' Expected Shortfall"),verbose=T)
+#' 
 #' # Example 3: Non-interactive
-#' ArgList <- list(
+#' arg.list <- list(
 #' 		ES=list(method=c("modified"),
 #' 				p=0.9),
 #' 		VaR=list(method=c("gaussian"))
 #' )
-#' res.ex3 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=FALSE, ArgList=ArgList, #' verbose=T, digits=4)
+#' res.ex3 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=FALSE,
+#'  arg.list=arg.list, #' verbose=T, digits=4)
+#' 
+#' # Example 4: Latex code 
+#' arg.list <- list(
+#' 		ES=list(method=c("modified"),
+#' 				p=0.9),
+#' 		VaR=list(method=c("gaussian"))
+#' )
+# 
+#' res.ex4 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=FALSE, 
+#' arg.list=arg.list, #' verbose=T, digits=4, latex=TRUE)
 #' @export
 table.Performance <-
-function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, ArgList=NULL, digits=4, ...){
+function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.list=NULL, digits=4, latex=FALSE, ...){
 	# FUNCTION: 47-1 different metrics
 	pool <- table.Performance.pool()
 	
@@ -110,14 +124,14 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, ArgL
 	names(metricsOptArgVal) <- metrics
 	
 	
-	if(!is.null(ArgList)){
-		if(!is.list(ArgList)) stop("Input argument ArgList should be a list")
-		if(length(setdiff(names(ArgList),names(metricsOptArgVal)))!=0) 
-			stop(paste("Mismatch: input argument ArgList for",paste(names(ArgList),collapse=","), ",  but input metrics are",paste(names(metricsOptArgVal),collapse=",")))
-		if(!all(unlist(lapply(ArgList,names)) %in% unlist(lapply(metricsOptArgVal,names))))
-			stop("Input argument ArgList doesn't match with argument metrics")
+	if(!is.null(arg.list)){
+		if(!is.list(arg.list)) stop("Input argument arg.list should be a list")
+		if(length(setdiff(names(arg.list),names(metricsOptArgVal)))!=0) 
+			stop(paste("Mismatch: input argument arg.list for",paste(names(arg.list),collapse=","), ",  but input metrics are",paste(names(metricsOptArgVal),collapse=",")))
+		if(!all(unlist(lapply(arg.list,names)) %in% unlist(lapply(metricsOptArgVal,names))))
+			stop("Input argument arg.list doesn't match with argument metrics")
 		
-		metricsOptArgVal <- lapply(ArgList,function(x){
+		metricsOptArgVal <- lapply(arg.list,function(x){
 					t1 <- unlist(x)
 					t2 <- suppressWarnings(sapply(t1,function(xx){
 										if(is.na(as.numeric(xx)))
@@ -185,6 +199,13 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, ArgL
 		cat("###################################","\n")
 		cat("table:\n")
 		print(res$resultingtable)
+	}
+	
+	if(latex){
+		require(xtable)
+		cat("###################################","\n")
+		cat("Latex code:\n")
+		print(xtable(res$resultingtable,digits=digits,...))
 	}
 	
 	return(res)
