@@ -13,19 +13,24 @@ table.Performance() aims to summerize return metrics ( risk, performance, statis
 
 ## INSTALL 
 the latest development version:
-
+```
 install.packages("devtools")
 devtools::install_github("devtools")
 library(devtools)
 install_github("kecoli/PAenhance")
 library(PAenhance)
-
- Get main help page for package
-\code{help(package = "PAenhance")}
+```
+Get main help page for package
+```
+help(package = "PAenhance")
+```
  Get description file
+```
 packageDescription("PAenhance") # Short description
 library(help=PAenhance)
+```
 
- List functions
+List functions
+```
 ls("package:PAenhance")
-
+```
