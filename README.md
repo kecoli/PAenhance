@@ -2,6 +2,11 @@ PAenhance
 =========
 
 ##  NEWS
+Updates: 05/10
+* table.Performance
+ * Add interactive=FALSE
+ * Add latex
+ * Add Shiny app spark.rstudio.com/kecoli/PerformanceMetric
 Updates: 05/03 
 Fixed bugs from Semideviance metric. 
 
