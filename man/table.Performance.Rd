@@ -79,7 +79,7 @@ arg.list=arg.list, #' verbose=T, digits=4, latex=TRUE)
 Kirk Li \email{kirkli@stat.washington.edu}
 }
 \seealso{
-\code{\link{table.Arbitrary}}
+\code{\link{table.Performance.pool}},\code{\link{table.Performance.pool.cran}},\code{\link{table.Arbitrary}}
 }
 \keyword{measure}
 \keyword{metrics}

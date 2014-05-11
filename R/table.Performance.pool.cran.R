@@ -6,6 +6,7 @@
 #' @keywords table metrics performance measure
 #' @examples
 #' table.Performance.pool.cran()
+#' @export
 table.Performance.pool.cran <-
 function(...){
 	c(		"AdjustedSharpeRatio", 

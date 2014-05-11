@@ -5,6 +5,9 @@
 \usage{
 table.Performance.pool(...)
 }
+\arguments{
+  \item{NULL}{}
+}
 \description{
 Print metrics from R-forge PerformanceAnalytics that
 compatible with table.Performance

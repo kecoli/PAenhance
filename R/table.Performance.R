@@ -23,7 +23,7 @@
 #' @details use \code{table.Performance.pool} to check available metrics. recoded SharpeRatio 
 #' TODO: 
 #' @author Kirk Li  \email{kirkli@@stat.washington.edu} 
-#' @seealso \code{\link{table.Arbitrary}}
+#' @seealso \code{\link{table.Performance.pool}},\code{\link{table.Performance.pool.cran}},\code{\link{table.Arbitrary}}
 #' @keywords table metrics performance measure
 #' @examples
 #' 
