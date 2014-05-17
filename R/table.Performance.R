@@ -15,13 +15,14 @@
 #' all the condicate metrics
 #' @param metricsNames options argument to specify metricsNames, default is NULL, 
 #' the same as the metrics
-#' @param interactive optional argument to trigger data editor window, default is TRUE
+#' @param interactive logical, default is TRUE, optional argument to trigger data editor window
 #' @param arg.list optional argument to specify input optional argument for each metric, uses 
 #' only interactive=FALSE
 #' @param digits optional argument to specify the significant digits in printed table, default is 4
-#' @param latex optional arguemnt to output latex code, default is FALSE
-#' @details use \code{table.Performance.pool} to check available metrics. recoded SharpeRatio 
-#' TODO: 
+#' @param latex logical, default is FALSE, optional arguemnt to output latex code
+#' @param exportFun logical, default is FALSE, optional argument to export function, see details
+#' @details use \code{table.Performance.pool} to check available metrics. recoded SharpeRatio.
+#' Both interactive and fixed input on metric set and optional arguments. Output latex code for resulting table. Export function that uses the same metrics and optional argument from interactive input. 
 #' @author Kirk Li  \email{kirkli@@stat.washington.edu} 
 #' @seealso \code{\link{table.Performance.pool}},\code{\link{table.Performance.pool.cran}},\code{\link{table.Arbitrary}}
 #' @keywords table metrics performance measure
@@ -35,7 +36,7 @@
 #'
 #' # Example 2: start with Var and ES
 #' res.ex2 <- table.Performance(edhec,metrics=c("VaR", "ES"), 
-#' metricsNames=c("Modified VaR","Modified #' Expected Shortfall"),verbose=T)
+#' metricsNames=c("Modified VaR","Modified Expected Shortfall"),verbose=T)
 #' 
 #' # Example 3: Non-interactive
 #' arg.list <- list(
@@ -44,7 +45,7 @@
 #' 		VaR=list(method=c("gaussian"))
 #' )
 #' res.ex3 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=FALSE,
-#'  arg.list=arg.list, #' verbose=T, digits=4)
+#'  arg.list=arg.list, verbose=T, digits=4)
 #' 
 #' # Example 4: Latex code 
 #' arg.list <- list(
@@ -55,9 +56,15 @@
 # 
 #' res.ex4 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=FALSE, 
 #' arg.list=arg.list, #' verbose=T, digits=4, latex=TRUE)
+#'
+#' # Example 5: Export function 
+#' res.ex5 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=TRUE, verbose=T, #' digits=4, latex=FALSE, exportFun="myfun1", flag.metricsOptArgVal.export=FALSE)
+#' myfun1(R=edhec)  # myfun1 uses res.ex5's metrics and optional arguments 
+#' 
+#' 
 #' @export
 table.Performance <-
-function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.list=NULL, digits=4, latex=FALSE, ...){
+function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.list=NULL, digits=4, latex=FALSE, exportFun=NULL, flag.metricsOptArgVal.export=FALSE,...){
 	# FUNCTION: 47-1 different metrics
 	pool <- table.Performance.pool()
 	
@@ -101,7 +108,10 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 		metrics.vec <- metrics.vec[order(metrics.vec$include,decreasing=T),]
 	}
 #	open data editor	
-	
+	if(interactive & !is.null(arg.list))
+		stop("Error: either uses interactive method or user input ArgList, not both")
+	# TODO: some improvement can be made here
+
 	if(interactive){
 		metrics.vec <- fix(metrics.vec) #allow user to change the input
 	} 
@@ -135,13 +145,20 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 					t1 <- unlist(x)
 					t2 <- suppressWarnings(sapply(t1,function(xx){
 										if(is.na(as.numeric(xx)))
-											paste0("\"",xx,"\"")
+											paste0("'",xx,"'")
 										else {xx}
 									}))
 #			 expected warning when checking wheter input is numeric convertable or not
 					names(t2) <- names(x)
 					t2
 				})
+	} 
+	
+	if(flag.metricsOptArgVal.export & is.null(arg.list)){
+		cat("###################################","\n")
+		cat("use previous stored optional argument\n")
+		cat("###################################","\n")
+		metricsOptArgVal <- metricsOptArgVal.export
 	}
 	
 	
@@ -208,5 +225,35 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 		print(xtable(res$resultingtable,digits=digits,...))
 	}
 	
+	if(!is.null(exportFun)){
+		if(!is.character(exportFun))
+			warning("exportFun is mis-specified")
+		else{
+			cat("###################################","\n")
+			cat(paste0("Exporting function ",exportFun,"\n"))
+			cat("###################################","\n")
+			string1 <- paste(exportFun,"<<-","function(R,metrics=",'c(',paste(paste0("'",metrics,"'"),collapse=','),')',", metricsNames=",'c(',paste(paste0("'",metricsNames,"'"),collapse=','),')', ", verbose=FALSE, interactive=FALSE, arg.list=NULL, digits=4, latex = FALSE, exportFun=NULL,metricsOptArgVal.export,...)")
+			string2 <- paste("{table.Performance(R=R,metrics=metrics,metricsNames=metricsNames,verbose=verbose,interactive=interactive,arg.list=arg.list,digits=digits,latex=latex,exportFun=exportFun,flag.metricsOptArgVal.export=TRUE,...)}")
+			
+			eval(parse(text=paste0(string1,string2)))
+			
+			cat(paste0(string1,string2),"\n")
+			cat("###################################","\n")
+			
+			metricsOptArgVal.export <<- metricsOptArgVal
+			
+		}
+			
+	}
 	return(res)
 }
+
+
+	
+	
+	
+	
+	
+	
+	
+	

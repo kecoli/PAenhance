@@ -4,7 +4,8 @@
 \title{Generate general performance table for returns}
 \usage{
 table.Performance(R, metrics = NULL, metricsNames = NULL, verbose = FALSE,
-  interactive = TRUE, arg.list = NULL, digits = 4, latex = FALSE, ...)
+  interactive = TRUE, arg.list = NULL, digits = 4, latex = FALSE,
+  exportFun = NULL, flag.metricsOptArgVal.export = FALSE, ...)
 }
 \arguments{
   \item{R}{an xts, vector, matrix, data frame, timeSeries
@@ -17,8 +18,8 @@ table.Performance(R, metrics = NULL, metricsNames = NULL, verbose = FALSE,
   \item{metricsNames}{options argument to specify
   metricsNames, default is NULL, the same as the metrics}
 
-  \item{interactive}{optional argument to trigger data
-  editor window, default is TRUE}
+  \item{interactive}{logical, default is TRUE, optional
+  argument to trigger data editor window}
 
   \item{arg.list}{optional argument to specify input
   optional argument for each metric, uses only
@@ -27,8 +28,11 @@ table.Performance(R, metrics = NULL, metricsNames = NULL, verbose = FALSE,
   \item{digits}{optional argument to specify the
   significant digits in printed table, default is 4}
 
-  \item{latex}{optional arguemnt to output latex code,
-  default is FALSE}
+  \item{latex}{logical, default is FALSE, optional arguemnt
+  to output latex code}
+
+  \item{exportFun}{logical, default is FALSE, optional
+  argument to export function, see details}
 }
 \description{
 Main function to produce summary table. user can choose a
@@ -44,7 +48,10 @@ the argument (column index) is not defined for this metric
 }
 \details{
 use \code{table.Performance.pool} to check available
-metrics. recoded SharpeRatio TODO:
+metrics. recoded SharpeRatio. Both interactive and fixed
+input on metric set and optional arguments. Output latex
+code for resulting table. Export function that uses the
+same metrics and optional argument from interactive input.
 }
 \examples{
 library(PerformanceAnalytics,lib="C:/R/R-3.1.0/library_forge")
@@ -55,7 +62,7 @@ res <- table.Performance(R=edhec,verbose=T, interactive=TRUE)
 
 # Example 2: start with Var and ES
 res.ex2 <- table.Performance(edhec,metrics=c("VaR", "ES"),
-metricsNames=c("Modified VaR","Modified #' Expected Shortfall"),verbose=T)
+metricsNames=c("Modified VaR","Modified Expected Shortfall"),verbose=T)
 
 # Example 3: Non-interactive
 arg.list <- list(
@@ -64,7 +71,7 @@ arg.list <- list(
 		VaR=list(method=c("gaussian"))
 )
 res.ex3 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=FALSE,
- arg.list=arg.list, #' verbose=T, digits=4)
+ arg.list=arg.list, verbose=T, digits=4)
 
 # Example 4: Latex code
 arg.list <- list(
@@ -74,6 +81,10 @@ arg.list <- list(
 )
 res.ex4 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=FALSE,
 arg.list=arg.list, #' verbose=T, digits=4, latex=TRUE)
+
+# Example 5: Export function
+res.ex5 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=TRUE, verbose=T, #' digits=4, latex=FALSE, exportFun="myfun1", flag.metricsOptArgVal.export=FALSE)
+myfun1(R=edhec)  # myfun1 uses res.ex5's metrics and optional arguments
 }
 \author{
 Kirk Li \email{kirkli@stat.washington.edu}
