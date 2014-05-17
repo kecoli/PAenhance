@@ -40,7 +40,7 @@
 #' 
 #' # Example 3: Non-interactive
 #' arg.list <- list(
-#' 		ES=list(method=c("modified"),
+#' 		ES=list(method=c("modified","test"),
 #' 				p=0.9),
 #' 		VaR=list(method=c("gaussian"))
 #' )
@@ -59,12 +59,13 @@
 #'
 #' # Example 5: Export function 
 #' res.ex5 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=TRUE, verbose=T,
-#' digits=4, latex=FALSE, exportFun="myfun1", flag.metricsOptArgVal.export=FALSE)
+#' digits=4, latex=FALSE, exportFun="myfun1", flag.pre.arg.list=FALSE)
 #' myfun1(R=edhec)  
 #' # myfun1 uses res.ex5's metrics and optional arguments 
+#' args(myfun1)
 #' @export
 table.Performance <-
-function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.list=NULL, digits=4, latex=FALSE, exportFun=NULL, flag.metricsOptArgVal.export=FALSE,...){
+		function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.list=NULL, digits=4, latex=FALSE, exportFun=NULL, flag.pre.arg.list=FALSE,...){
 	# FUNCTION: 47-1 different metrics
 	pool <- table.Performance.pool()
 	
@@ -111,7 +112,7 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 	if(interactive & !is.null(arg.list))
 		stop("Error: either uses interactive method or user input ArgList, not both")
 	# TODO: some improvement can be made here
-
+	
 	if(interactive){
 		metrics.vec <- fix(metrics.vec) #allow user to change the input
 	} 
@@ -140,7 +141,21 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 			stop(paste("Mismatch: input argument arg.list for",paste(names(arg.list),collapse=","), ",  but input metrics are",paste(names(metricsOptArgVal),collapse=",")))
 		if(!all(unlist(lapply(arg.list,names)) %in% unlist(lapply(metricsOptArgVal,names))))
 			stop("Input argument arg.list doesn't match with argument metrics")
+		metricsOptArgVal <- NULL
 		
+		# Extract the first argument and if it is NULL, replace with _NULL_
+		arg.list <- lapply(arg.list,function(x){
+					lapply(x,function(xx){
+								t1 <- xx[1]
+								if (is.null(t1))
+									t1 <-"_NULL_"	
+								t1
+							})
+					
+				})
+		
+		
+		# Convert arg.list to metricsOptArgVal
 		metricsOptArgVal <- lapply(arg.list,function(x){
 					t1 <- unlist(x)
 					t2 <- suppressWarnings(sapply(t1,function(xx){
@@ -152,13 +167,24 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 					names(t2) <- names(x)
 					t2
 				})
+		
+		#  replace _NULL_ with NULL
+		metricsOptArgVal <- lapply(metricsOptArgVal,function(x){
+					lapply(x,function(xx){
+								t1 <- xx[1]
+								if (t1=="'_NULL_'")
+									t1 <-"NULL"	
+								t1
+							})
+					
+				})
+		
 	} 
 	
-	if(flag.metricsOptArgVal.export & is.null(arg.list)){
+	if(flag.pre.arg.list & !is.null(arg.list)){
 		cat("###################################","\n")
 		cat("use previous stored optional argument\n")
 		cat("###################################","\n")
-		metricsOptArgVal <- metricsOptArgVal.export
 	}
 	
 	
@@ -175,10 +201,13 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 			x = as.matrix(y[, column])
 			values = vector("numeric", 0)
 			for (metric in metrics) {
-#			 metric=metrics[1]
+#			 metric=metrics[3]
 				ArgString.i <- paste(names(metricsOptArgVal[[metric]]),metricsOptArgVal[[metric]],sep=" = ")
-				Arg.mat[[metric]] <- ArgString.i
+				
 				ArgString.i <- paste(ArgString.i,collapse =", ")
+				
+				Arg.mat[[metric]] <- ArgString.i
+				
 				if(length(ArgString.i)>0 & nchar(ArgString.i)>0)
 					newvalue = eval(parse(text=paste0("apply(x, MARGIN = 2, FUN = metric,",ArgString.i,")"))) else
 					newvalue = apply(x, MARGIN = 2, FUN = metric) #...
@@ -199,9 +228,26 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 	}
 	
 #	generating the table	
-#	res <- table.Arbitrary.m()
-	res <- table.Arbitrary.m(...)
+	res <- table.Arbitrary.m()
+#	res <- table.Arbitrary.m(...)
 #	show printout	
+	
+	# convert Arg.mat to arg.list
+	arg.list.string <- paste("list(",paste(metrics,"=",paste("list(",res$Arg.mat,")"),collapse=","),")")
+	# save arg.list to arg.list.p
+	eval(parse(text=paste("arg.list.p <- ",arg.list.string)))
+	# take the first argument
+	res$Arg.List <- lapply(arg.list.p,function(x){
+				lapply(x,function(xx){
+							t1 <- xx[1]
+							if (is.null(t1))
+								t1 <-"NULL"	
+							t1
+						})
+				
+			})
+	
+	res$Arg.mat <- NULL
 	if(verbose){
 		cat("###################################","\n")
 		cat("metrics:\n")
@@ -210,9 +256,9 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 		cat("metricsNames:\n")
 		print(metricsNames)
 		cat("###################################","\n")
-		cat("metricsOptArg:\n")
+		cat("arg.list:\n")
 		cat("Attention: for more than one element in args, \n only the first one will be used","\n")
-		print(res$Arg.mat)
+		print(res$Arg.List)
 		cat("###################################","\n")
 		cat("table:\n")
 		print(res$resultingtable)
@@ -232,8 +278,11 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 			cat("###################################","\n")
 			cat(paste0("Exporting function ",exportFun,"\n"))
 			cat("###################################","\n")
-			string1 <- paste(exportFun,"<<-","function(R,metrics=",'c(',paste(paste0("'",metrics,"'"),collapse=','),')',", metricsNames=",'c(',paste(paste0("'",metricsNames,"'"),collapse=','),')', ", verbose=FALSE, interactive=FALSE, arg.list=NULL, digits=4, latex = FALSE, exportFun=NULL,metricsOptArgVal.export,...)")
-			string2 <- paste("{table.Performance(R=R,metrics=metrics,metricsNames=metricsNames,verbose=verbose,interactive=interactive,arg.list=arg.list,digits=digits,latex=latex,exportFun=exportFun,flag.metricsOptArgVal.export=TRUE,...)}")
+			
+			string1 <- paste(exportFun,"<<-","function(R,metrics=",'c(',paste(paste0("'",metrics,"'"),collapse=','),')',", metricsNames=",'c(',paste(paste0("'",metricsNames,"'"),collapse=','),')', ", verbose=FALSE, interactive=FALSE, arg.list=",arg.list.string,", digits=4, latex = FALSE, exportFun=NULL,...)")
+			
+			string2 <- paste("{table.Performance(R=R,metrics=metrics,metricsNames=metricsNames,verbose=verbose,interactive=interactive,arg.list=arg.list,digits=digits,latex=latex,exportFun=exportFun,flag.pre.arg.list=TRUE,...)}")
+			
 			
 			eval(parse(text=paste0(string1,string2)))
 			
@@ -243,17 +292,14 @@ function(R,metrics=NULL,metricsNames=NULL, verbose=FALSE, interactive=TRUE, arg.
 			metricsOptArgVal.export <<- metricsOptArgVal
 			
 		}
-			
+		
 	}
+	
 	return(res)
 }
 
+res.ex5 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=TRUE, verbose=T, digits=4, latex=FALSE, exportFun="myfun1", flag.pre.arg.list=FALSE)
 
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
