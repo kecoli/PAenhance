@@ -80,11 +80,13 @@ arg.list <- list(
 		VaR=list(method=c("gaussian"))
 )
 res.ex4 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=FALSE,
-arg.list=arg.list, #' verbose=T, digits=4, latex=TRUE)
+arg.list=arg.list, verbose=T, digits=4, latex=TRUE)
 
 # Example 5: Export function
-res.ex5 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=TRUE, verbose=T, #' digits=4, latex=FALSE, exportFun="myfun1", flag.metricsOptArgVal.export=FALSE)
-myfun1(R=edhec)  # myfun1 uses res.ex5's metrics and optional arguments
+res.ex5 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=TRUE, verbose=T,
+digits=4, latex=FALSE, exportFun="myfun1", flag.metricsOptArgVal.export=FALSE)
+myfun1(R=edhec)
+# myfun1 uses res.ex5's metrics and optional arguments
 }
 \author{
 Kirk Li \email{kirkli@stat.washington.edu}
