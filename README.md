@@ -2,8 +2,12 @@ PAenhance
 =========
 
 ##  NEWS
-Updates: 05/10
+Updates: 05/17
+* table.Performance
+ * Add exportFun=TRUE
+ 
 
+Updates: 05/10
 * table.Performance
  * Add interactive=FALSE
  * Add latex
