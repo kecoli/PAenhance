@@ -9,6 +9,7 @@
 #' @export
 table.Performance.pool.cran <-
 function(...){
+
 	c(		"AdjustedSharpeRatio", 
 			"AverageDrawdown", 
 			"BernardoLedoitRatio", 

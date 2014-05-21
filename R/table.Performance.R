@@ -53,7 +53,6 @@
 #' 				p=0.9),
 #' 		VaR=list(method=c("gaussian"))
 #' )
-# 
 #' res.ex4 <- table.Performance(R=edhec,metrics=c("VaR", "ES"), interactive=FALSE, 
 #' arg.list=arg.list, verbose=T, digits=4, latex=TRUE)
 #'
