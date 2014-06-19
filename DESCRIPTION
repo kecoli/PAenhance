@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a3cfd620f94718d5ba636c62fa33cbf20f70864b
 Package: PAenhance
 Type: Package
 Title: Enhancement of PerformanceAnalytics developed by Kirk Li and Douglass
@@ -10,6 +13,7 @@ Maintainer: Kirk Li <kirkli@stat.washington.edu>
 Description: Develop various enhancement to PerformanceAnalytics Package
 License: GPL
 Copyright: (c) 2014-2014
+<<<<<<< HEAD
 Contributors: 
 Roxygen: list(wrap = TRUE)
 =======
@@ -27,3 +31,7 @@ Copyright: (c) 2014-2014
 Contributors: 
 Roxygen: list(wrap = TRUE)
 >>>>>>> a5e52e3aa047a1e03a04d2b57852d2c075519093
+=======
+Contributors: TBD
+Roxygen: list(wrap = TRUE)
+>>>>>>> a3cfd620f94718d5ba636c62fa33cbf20f70864b
