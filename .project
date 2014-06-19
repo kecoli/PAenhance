@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>PAenhance</name>
@@ -17,3 +18,24 @@
 		<nature>de.walware.statet.r.RPkgNature</nature>
 	</natures>
 </projectDescription>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>PAenhance</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>de.walware.statet.r.builders.RSupport</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>de.walware.statet.base.StatetNature</nature>
+		<nature>de.walware.statet.r.RNature</nature>
+		<nature>de.walware.statet.r.RPkgNature</nature>
+	</natures>
+</projectDescription>
+>>>>>>> a5e52e3aa047a1e03a04d2b57852d2c075519093
