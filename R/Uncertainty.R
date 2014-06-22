@@ -1,5 +1,5 @@
 #' Uncertainty measure of Variance Estimator
-#' Returns the standard error of the estimator of Variance.
+#' This function returns the standard error of the three estimator of Variance.
 #' @param R an xts, vector, matrix, data frame, timeSeries or zoo object of
 #' asset returns
 #' @param methods the estimation methods for Variance estimator, default is normal
@@ -10,7 +10,7 @@
 #' data(edhec)
 #' var.se(edhec[,1],methods="normal")
 #' @export 
-#' @rdname var.se
+#' @rdname UncertaintyMeasure
 var.se <- function(R,methods=c("normal","non-normal","bootstrap")){
 	R <- checkData(R, method="xts")
 	columns=colnames(R)
