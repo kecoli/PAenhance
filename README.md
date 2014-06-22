@@ -1,7 +1,10 @@
 PAenhance
 =========
 
+
 ##  NEWS
+Updates: 06/22
+
 Updates: 05/17
 * table.Performance
  * Add exportFun=TRUE
