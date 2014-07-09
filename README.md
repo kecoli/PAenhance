@@ -14,7 +14,7 @@ Updates: 05/10
 * table.Performance
  * Add interactive=FALSE
  * Add latex
- * Add Shiny app http://spark.rstudio.com/kecoli/PerformanceMetric
+ * Add Shiny app http://spark.rstudio.com/kecoli/PerformanceMetric   https://kecoli.shinyapps.io/PA_shiny/
 
 Updates: 05/03 
 Fixed bugs from Semideviance metric. 
